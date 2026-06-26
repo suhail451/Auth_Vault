@@ -3,12 +3,15 @@ package com.Project.Auth_Vault.Service;
 
 import com.Project.Auth_Vault.DTO.LoginRequest;
 import com.Project.Auth_Vault.DTO.LoginResponse;
+import com.Project.Auth_Vault.DTO.MeResponse;
 import com.Project.Auth_Vault.DTO.RefreshRequest;
 import com.Project.Auth_Vault.Entity.RefreshTokenEntity;
 import com.Project.Auth_Vault.Entity.SignupEntity;
 import com.Project.Auth_Vault.Repository.LoginRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.Project.Auth_Vault.DTO.MeResponse;
+import com.Project.Auth_Vault.Entity.SignupEntity;
 
 
 @Service
@@ -51,6 +54,19 @@ public class AuthService {
 
     public void logout(RefreshRequest request) {
         refreshTokenService.deleteToken(request.getRefreshToken());
+    }
+
+    public MeResponse getMe(String username) {
+
+        // Step 1 — database se user dhundo username se
+        SignupEntity user = loginRepository.findByusername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Step 2 — username aur roles return karo
+        return new MeResponse(
+                user.getUsername(),
+                user.getRoles()
+        );
     }
 
 
