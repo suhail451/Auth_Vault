@@ -1,0 +1,25 @@
+application.properties
+application-*.properties
+# Environment files
+.env
+.env.*
+*.env
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Build output
+target/
+*.class
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
