@@ -3,10 +3,14 @@ package com.Project.Auth_Vault.Service;
 
 import com.Project.Auth_Vault.DTO.SignupRequest;
 import com.Project.Auth_Vault.DTO.SignupResponse;
+import com.Project.Auth_Vault.Entity.Role;
 import com.Project.Auth_Vault.Entity.SignupEntity;
 import com.Project.Auth_Vault.Repository.SignupRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+
+
 
 @Service
 public class SignupService {
@@ -14,7 +18,7 @@ public class SignupService {
     final SignupRepository signupRepository;
     final PasswordEncoder passwordEncoder;
 
-    public SignupService(SignupRepository signupRepository, PasswordEncoder passwordEncoder, PasswordEncoder passwordEncoder1){
+    public SignupService(SignupRepository signupRepository, PasswordEncoder passwordEncoder){
         this.signupRepository=signupRepository;
 
         this.passwordEncoder = passwordEncoder;
@@ -31,12 +35,15 @@ public class SignupService {
                encodedPassword
 
        );
+        Role assignedRole = signupRequest.getRole() != null ? signupRequest.getRole() : Role.ROLE_USER;
 
         SignupEntity savedEntity=signupRepository.save(signupEntity);
 
         return new SignupResponse(
                 savedEntity.getUsername()
         );
+
+
 
 
 

@@ -1,11 +1,14 @@
 package com.Project.Auth_Vault.Entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.Project.Auth_Vault.Entity.Role;    // ✅ Your own Role enum
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -13,7 +16,6 @@ import lombok.Setter;
 @Table
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class SignupEntity {
 
     @Id
@@ -24,9 +26,15 @@ public class SignupEntity {
 
     private String password;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private Set<Role> roles = new HashSet<>();
+
     public SignupEntity(String username, String password) {
         this.username = username;
         this.password = password;
+        this.roles.add(Role.ROLE_USER);
     }
-
 }

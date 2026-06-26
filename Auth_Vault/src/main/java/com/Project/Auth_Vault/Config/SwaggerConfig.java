@@ -21,11 +21,6 @@ public class SwaggerConfig {
                             .name("Suhail")
                             .email("arainsuhail451@gmal.com")));
 
-
-
-
-
-
 }
 
 
