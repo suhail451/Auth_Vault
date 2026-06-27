@@ -35,19 +35,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // step 1 — header padho
         String authHeader = request.getHeader("Authorization");
 
-        // step 2 — Bearer check
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response); // aage jane do
+            response.setStatus(401);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"status\":401,\"message\":\"Token missing — Authorization header do\"}");
             return;
         }
 
-        // step 3 — token nikalo
         String token = authHeader.substring(7);
 
-        // step 4 — username nikalo
         String username = null;
         try {
             username = jwtService.extractUsername(token);
@@ -55,13 +53,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             throw new InValidTokenException("Token is Tampered ");
         }
 
-        // step 5 — SecurityContext checfk
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // step 6 — DB se user load karo
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            // step 7 — validate karo
             if (jwtService.validateToken(token, username)) {
 
 
@@ -80,7 +75,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }
 
-        // step 9 — request aage bhejo
         filterChain.doFilter(request, response);
     }
 }

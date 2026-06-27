@@ -4,6 +4,7 @@ import com.Project.Auth_Vault.DTO.ErrorResponse;
 
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,6 +35,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleRuntime(RuntimeException ex) {
         ErrorResponse error = new ErrorResponse(500, ex.getMessage());
         return ResponseEntity.status(500).body(error);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidJson(HttpMessageNotReadableException ex) {
+        ErrorResponse error = new ErrorResponse(400, "Galat JSON format hai request mein");
+        return ResponseEntity.status(400).body(error);
     }
 
 
