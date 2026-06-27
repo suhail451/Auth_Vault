@@ -6,6 +6,7 @@ import com.Project.Auth_Vault.Entity.SignupEntity;
 import com.Project.Auth_Vault.Repository.RefreshTokenRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import com.Project.Auth_Vault.GlobalException.InValidTokenException;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -21,7 +22,6 @@ public class RefreshTokenService {
 
     }
 
-    // Naya refresh token banao aur DB mein save karo
     public RefreshTokenEntity createRefreshToken(SignupEntity user) {
         RefreshTokenEntity token = new RefreshTokenEntity();
         token.setToken(UUID.randomUUID().toString());
@@ -31,22 +31,21 @@ public class RefreshTokenService {
         return refreshTokenRepository.save(token);
     }
 
-    // Token valid hai ya nahi check karo
-    public RefreshTokenEntity verifyExpiration(String token) {
+    public RefreshTokenEntity verifyExpiration(String token) throws InValidTokenException {
         RefreshTokenEntity refreshToken = refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
+                .orElseThrow(() -> new InValidTokenException("Refresh token not found"));
 
         if (refreshToken.isRevoked() || refreshToken.getExpiryDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(refreshToken);
-            throw new RuntimeException("Refresh token expired or revoked");
+            throw new InValidTokenException("Refresh token expired or revoked");
         }
         return refreshToken;
     }
 
     // Logout par token revoke karo
-    public void revokeToken(String token) {
+    public void revokeToken(String token) throws InValidTokenException {
         RefreshTokenEntity refreshToken = refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Token not found"));
+                .orElseThrow(() -> new InValidTokenException("Refresh token not found"));
         refreshToken.setRevoked(true);
         refreshTokenRepository.save(refreshToken);
     }

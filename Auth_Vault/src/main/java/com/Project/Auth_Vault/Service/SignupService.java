@@ -26,17 +26,14 @@ public class SignupService {
 
     public SignupResponse saveUser(SignupRequest signupRequest){
 
-//        encode password
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
-//        map data to entity
-       SignupEntity signupEntity=new SignupEntity(
+        SignupEntity signupEntity=new SignupEntity(
                signupRequest.getUsername(),
                encodedPassword
 
-       );
+        );
         Role assignedRole = signupRequest.getRole() != null ? signupRequest.getRole() : Role.ROLE_USER;
-
         SignupEntity savedEntity=signupRepository.save(signupEntity);
 
         return new SignupResponse(

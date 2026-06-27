@@ -2,6 +2,8 @@ package com.Project.Auth_Vault.Service;
 
 import com.Project.Auth_Vault.Entity.Role;
 import com.Project.Auth_Vault.Entity.SignupEntity;
+import com.Project.Auth_Vault.GlobalException.InValidTokenException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -37,19 +39,22 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractUsername   (String token   ){
-
+    public String extractUsername(String token ) throws InValidTokenException {
+        try{
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+        } catch (JwtException e){
+        throw new InValidTokenException("Token invalid or tampered");
+         }
 
     }
 
 
-    public boolean validateToken(String token,String username){
+    public boolean validateToken(String token,String username) throws InValidTokenException {
 
         String ExtractedUserName=extractUsername(token);
         boolean isUsernameMatch=ExtractedUserName.equals(username);
@@ -58,15 +63,19 @@ public class JwtService {
 
     }
 
-    public boolean isTokenExpired(String token){
-            Date expiration=Jwts.parser()
+    public boolean isTokenExpired(String token) throws InValidTokenException {
+
+        try {
+            Date expiration = Jwts.parser()
                     .verifyWith(getSigningKey())
                     .build()
                     .parseSignedClaims(token)
                     .getPayload()
                     .getExpiration();
             return expiration.before(new Date());
-
+        }catch (JwtException e){
+            throw new InValidTokenException("Token Invalid or Expired");
+        }
     }
 
 

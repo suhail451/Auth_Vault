@@ -1,9 +1,12 @@
 package com.Project.Auth_Vault.Service;
 
+import com.Project.Auth_Vault.GlobalException.InValidTokenException;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +28,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -44,9 +48,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         // step 4 — username nikalo
-        String username = jwtService.extractUsername(token);
+        String username = null;
+        try {
+            username = jwtService.extractUsername(token);
+        } catch (InValidTokenException e) {
+            throw new InValidTokenException("Token is Tampered ");
+        }
 
-        // step 5 — SecurityContext check
+        // step 5 — SecurityContext checfk
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             // step 6 — DB se user load karo
@@ -55,7 +64,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             // step 7 — validate karo
             if (jwtService.validateToken(token, username)) {
 
-                // step 8 — badge lagao (SecurityContext set karo)
+
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,

@@ -7,7 +7,11 @@ import com.Project.Auth_Vault.DTO.MeResponse;
 import com.Project.Auth_Vault.DTO.RefreshRequest;
 import com.Project.Auth_Vault.Entity.RefreshTokenEntity;
 import com.Project.Auth_Vault.Entity.SignupEntity;
+import com.Project.Auth_Vault.GlobalException.InValidCredentialException;
+import com.Project.Auth_Vault.GlobalException.InValidTokenException;
+import com.Project.Auth_Vault.GlobalException.UserNotFoundException;
 import com.Project.Auth_Vault.Repository.LoginRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.Project.Auth_Vault.DTO.MeResponse;
@@ -30,13 +34,13 @@ public class AuthService {
     }
 
 
-    public LoginResponse login(LoginRequest loginRequest) {
+    public LoginResponse login(LoginRequest loginRequest) throws InValidCredentialException {
 
         SignupEntity user = loginRepository.findByusername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User nahi mil raha bhi"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new InValidCredentialException("Invalid credentials");
 
         }
 
@@ -46,7 +50,7 @@ public class AuthService {
         return new LoginResponse(accessToken, refreshToken.getToken());
 
     }
-    public LoginResponse refresh(RefreshRequest request) {
+    public LoginResponse refresh(RefreshRequest request) throws InValidTokenException {
         RefreshTokenEntity refreshToken = refreshTokenService.verifyExpiration(request.getRefreshToken());
         String newAccessToken = jwtService.generateToken(refreshToken.getUser());
         return new LoginResponse(newAccessToken, refreshToken.getToken());
@@ -60,7 +64,7 @@ public class AuthService {
 
         // Step 1 — database se user dhundo username se
         SignupEntity user = loginRepository.findByusername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // Step 2 — username aur roles return karo
         return new MeResponse(
