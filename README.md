@@ -1,7 +1,7 @@
 # 🔐 Auth Vault
 
 > A developer-first authentication service built with **Spring Boot** that provides secure JWT authentication, Refresh Tokens, and REST APIs for seamless integration into any application.
-
+(In Progress)
 ---
 
 ## 📌 Overview
