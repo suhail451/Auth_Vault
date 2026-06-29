@@ -1,4 +1,4 @@
-package com.Project.Auth_Vault.Engine.GlobalException;
+package com.Project.Auth_Vault.GlobalException;
 
 import com.Project.Auth_Vault.Engine.DTO.ErrorResponse;
 

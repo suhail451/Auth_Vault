@@ -1,4 +1,4 @@
-package com.Project.Auth_Vault.Engine.GlobalException;
+package com.Project.Auth_Vault.GlobalException;
 
 public class InValidTokenException extends RuntimeException{
 

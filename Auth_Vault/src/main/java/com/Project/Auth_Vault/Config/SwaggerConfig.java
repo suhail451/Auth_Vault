@@ -1,4 +1,4 @@
-package com.Project.Auth_Vault.Engine.Config;
+package com.Project.Auth_Vault.Config;
 
 
 import io.swagger.v3.oas.models.OpenAPI;

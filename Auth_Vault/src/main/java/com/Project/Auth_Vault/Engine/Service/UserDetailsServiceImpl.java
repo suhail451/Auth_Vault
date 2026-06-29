@@ -1,7 +1,7 @@
 package com.Project.Auth_Vault.Engine.Service;
 
 import com.Project.Auth_Vault.Engine.Entity.SignupEntity;
-import com.Project.Auth_Vault.Engine.GlobalException.UserNotFoundException;
+import com.Project.Auth_Vault.GlobalException.UserNotFoundException;
 import com.Project.Auth_Vault.Engine.Repository.SignupRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

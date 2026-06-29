@@ -1,6 +1,6 @@
 package com.Project.Auth_Vault.Engine.Service;
 
-import com.Project.Auth_Vault.Engine.GlobalException.InValidTokenException;
+import com.Project.Auth_Vault.GlobalException.InValidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

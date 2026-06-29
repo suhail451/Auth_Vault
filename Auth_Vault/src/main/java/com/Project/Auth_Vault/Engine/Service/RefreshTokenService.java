@@ -6,7 +6,7 @@ import com.Project.Auth_Vault.Engine.Entity.SignupEntity;
 import com.Project.Auth_Vault.Engine.Repository.RefreshTokenRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import com.Project.Auth_Vault.Engine.GlobalException.InValidTokenException;
+import com.Project.Auth_Vault.GlobalException.InValidTokenException;
 
 import java.time.Instant;
 import java.util.UUID;

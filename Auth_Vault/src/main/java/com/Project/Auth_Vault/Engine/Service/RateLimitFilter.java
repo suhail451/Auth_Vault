@@ -25,18 +25,40 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
     private Bucket createNewBucket() {
-        Refill refill = Refill.greedy(5, Duration.ofMinutes(1));
-        Bandwidth limit = Bandwidth.classic(5, refill);
+        Refill refill = Refill.greedy(50, Duration.ofMinutes(1));
+        Bandwidth limit = Bandwidth.classic(50, refill);
         return Bucket.builder()
                 .addLimit(limit)
                 .build();
     }
+
+    private static final java.util.List<String> SKIP_PATHS = java.util.List.of(
+            "/developer/",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/api/apps"       // skip karo — developer dashboard calls
+    );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        // OPTIONS preflight skip
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Skip paths
+        boolean shouldSkip = SKIP_PATHS.stream().anyMatch(path::startsWith);
+        if (shouldSkip) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String ip = request.getRemoteAddr();
         Bucket bucket = getBucket(ip);
@@ -47,7 +69,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
             response.setStatus(429);
             response.setContentType("application/json");
             response.getWriter().write(
-                    "{\"status\":429,\"message\":\"Bohat zyada requests — 1 minute baad try karo\"}"
+                    "{\"status\":429,\"message\":\"Too many requests — try again in 1 minute\"}"
             );
         }
     }

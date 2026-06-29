@@ -1,5 +1,6 @@
-package com.Project.Auth_Vault.Engine.Config;
+package com.Project.Auth_Vault.Config;
 
+import com.Project.Auth_Vault.Engine.Service.ApiKeyFilter;
 import com.Project.Auth_Vault.Engine.Service.JwtAuthFilter;
 import com.Project.Auth_Vault.Engine.Service.RateLimitFilter;
 import com.Project.Auth_Vault.Engine.Service.UserDetailsServiceImpl;
@@ -24,12 +25,16 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsServiceImpl userDetailsService;
     private final RateLimitFilter rateLimitFilter;
+    private final ApiKeyFilter apiKeyFilter;
 
     public SecurityConfig(JwtAuthFilter jwtAuthFilter,
-                          UserDetailsServiceImpl userDetailsService, RateLimitFilter rateLimitFilter) {
+                          UserDetailsServiceImpl userDetailsService,
+                          RateLimitFilter rateLimitFilter,
+                          ApiKeyFilter apiKeyFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userDetailsService = userDetailsService;
         this.rateLimitFilter = rateLimitFilter;
+        this.apiKeyFilter = apiKeyFilter;
     }
 
     @Bean
@@ -37,52 +42,64 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-
+                        // in routes pe koi bhi filter nahi rokta
                         .requestMatchers(
+                                "/developer/signup",
+                                "/developer/login",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs"
+                        ).permitAll()
+
+                        // ye sab permitAll hain kyunki
+                        // ApiKeyFilter khud validate karega — Spring Security nahi rokegi
+                        .requestMatchers(
+                                "/api/apps/**",
                                 "/auth/register",
                                 "/auth/login",
                                 "/auth/refresh-token"
                         ).permitAll()
 
-                        .requestMatchers("/auth/me").authenticated()
                         .anyRequest().authenticated()
                 )
+
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(401);
                             response.setContentType("application/json");
-                            response.getWriter().write("{\"status\":401,\"message\":\"Pehle login karo\"}");
+                            response.getWriter().write(
+                                    "{\"status\":401,\"message\":\"Unauthorized\"}"
+                            );
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setStatus(403);
                             response.setContentType("application/json");
-                            response.getWriter().write("{\"status\":403,\"message\":\"Access nahi hai\"}");
+                            response.getWriter().write(
+                                    "{\"status\":403,\"message\":\"Access denied\"}"
+                            );
                         })
                 )
 
                 .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
 }

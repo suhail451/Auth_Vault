@@ -2,7 +2,7 @@ package com.Project.Auth_Vault.Engine.Service;
 
 import com.Project.Auth_Vault.Engine.Entity.Role;
 import com.Project.Auth_Vault.Engine.Entity.SignupEntity;
-import com.Project.Auth_Vault.Engine.GlobalException.InValidTokenException;
+import com.Project.Auth_Vault.GlobalException.InValidTokenException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
