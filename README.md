@@ -1,3 +1,22 @@
+
+# 📖 About Auth Vault
+
+Auth Vault is a developer-focused authentication platform built with Spring Boot that simplifies user authentication and authorization for modern applications.
+
+Instead of building authentication from scratch for every project, developers can use Auth Vault to securely manage users, generate API keys, and integrate authentication services into their applications.
+
+The project demonstrates real-world backend concepts such as:
+
+- JWT Authentication
+- Refresh Token Mechanism
+- API Key Management
+- Spring Security
+- Layered Architecture
+- Secure REST APIs
+- Exception Handling and Validation
+
+Auth Vault is designed as a production-inspired system that showcases how scalable and secure authentication services are built in modern backend applications.
+
 # 📸 Application Flow
 
 ## 🏠 1. Landing Page
@@ -35,7 +54,7 @@ Registered users authenticate themselves and obtain access to their dashboard.
 After login, developers can manage authentication resources and API integrations.
 
 <p align="center">
-  <img src="./images/Api key Dashboard.jpeg" width="900"/>
+  <img src="./images/Api_key_Dashboard.jpeg" width="900"/>
 </p>
 
 ---
@@ -45,7 +64,7 @@ After login, developers can manage authentication resources and API integrations
 Developers can manage connected applications and monitor their integrations.
 
 <p align="center">
-  <img src="./images/App Dashboard.jpeg" width="900"/>
+  <img src="./images/App_Dashboard.jpeg" width="900"/>
 </p>
 
 ---
