@@ -1,4 +1,3 @@
-````md
 # 📸 Application Flow
 
 ## 🏠 1. Landing Page
