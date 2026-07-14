@@ -1,16 +1,52 @@
-# 🔐 Auth Vault
+# 📸 Application Flow
 
-> A developer-first authentication service built with **Spring Boot** that provides secure JWT authentication, Refresh Tokens, and REST APIs for seamless integration into any application.
-(In Progress)
+## 🏠 1. Landing Page
+
+The entry point of Auth Vault where developers can explore the platform and begin authentication.
+
+<p align="center">
+  <img src="./images/HomePage.jpeg" width="900"/>
+</p>
+
 ---
 
-## 📌 Overview
+## 📝 2. Registration
 
-Auth Vault is a production-inspired authentication backend designed to eliminate the need to build authentication from scratch for every project.
+Developers can securely create an account to access the platform.
 
-It demonstrates modern backend development practices including layered architecture, JWT-based authentication, refresh token management, DTOs, validation, centralized exception handling, and Spring Security.
+<p align="center">
+  <img src="./images/Register.jpeg" width="500"/>
+</p>
 
-> **Project Status:** 🚧 Under Development
+---
+
+## 🔑 3. Login
+
+Registered users authenticate themselves and obtain access to their dashboard.
+
+<p align="center">
+  <img src="./images/Login.jpeg" width="500"/>
+</p>
+
+---
+
+## 👨‍💻 4. Developer Dashboard
+
+After login, developers can manage authentication resources and API integrations.
+
+<p align="center">
+  <img src="./images/Api key Dashboard.jpeg" width="900"/>
+</p>
+
+---
+
+## 📱 5. Application Dashboard
+
+Developers can manage connected applications and monitor their integrations.
+
+<p align="center">
+  <img src="./images/App Dashboard.jpeg" width="900"/>
+</p>
 
 ---
 
@@ -21,6 +57,7 @@ It demonstrates modern backend development practices including layered architect
 * JWT Access Token Authentication
 * Refresh Token Support
 * BCrypt Password Hashing
+* API Key Generation & Management
 * Protected REST APIs
 * Spring Security Integration
 * Global Exception Handling
@@ -53,7 +90,7 @@ It demonstrates modern backend development practices including layered architect
 
 ## 🏗 Architecture
 
-```
+```text
 Client
    │
    ▼
@@ -69,9 +106,9 @@ Repository
 Database
 ```
 
-Authentication Flow
+### Authentication Flow
 
-```
+```text
 Login Request
       │
       ▼
@@ -103,7 +140,7 @@ Access Granted
 
 ## 📂 Project Structure
 
-```
+```text
 src
  ├── config
  ├── controller
@@ -113,7 +150,8 @@ src
  ├── repository
  ├── security
  ├── service
- └── util
+ ├── util
+ └── validation
 ```
 
 ---
@@ -138,12 +176,13 @@ src
 
 ## 🔒 Security
 
-* BCrypt password hashing
+* BCrypt Password Hashing
 * JWT Access Tokens
-* Refresh Token mechanism
-* Stateless authentication
+* Refresh Token Mechanism
+* Stateless Authentication
 * Spring Security Filter Chain
-* Protected API endpoints
+* Protected API Endpoints
+* Secure API Key Management
 
 ---
 
@@ -159,15 +198,15 @@ git clone https://github.com/<your-username>/auth-vault.git
 
 Update your `application.properties` with your MySQL credentials.
 
-### Run
+### Run Application
 
 ```bash
 mvn spring-boot:run
 ```
 
-Open Swagger:
+Open Swagger Documentation:
 
-```
+```text
 http://localhost:8080/swagger-ui.html
 ```
 
@@ -178,20 +217,33 @@ http://localhost:8080/swagger-ui.html
 * Email Verification
 * Password Reset
 * OAuth2 (Google/GitHub)
-* API Keys
-* Multi-Tenant Support
 * Docker Deployment
 * Redis Token Store
 * Role-Based Authorization (RBAC)
+* Rate Limiting
+* Multi-Tenant Support
+* Monitoring & Logging
+* CI/CD Pipeline
 
 ---
 
 ## 🎯 Purpose
 
-This project was built to strengthen backend engineering skills and demonstrate the implementation of secure authentication using Spring Boot and JWT while following clean architecture and industry best practices.
+This project was built to strengthen backend engineering skills and demonstrate the implementation of secure authentication systems using Spring Boot and JWT while following clean architecture and industry best practices.
+
+The long-term vision is to evolve Auth Vault into a reusable authentication platform that can be integrated into multiple applications through APIs and API keys.
 
 ---
 
 ## 📄 License
 
 This project is intended for educational and portfolio purposes.
+
+```
+
+This structure puts screenshots near the top, which is where recruiters usually look first. The first thing they will see is:
+
+**Project → UI → Flow → Features → Code Architecture**
+
+This significantly improves portfolio presentation.
+```
