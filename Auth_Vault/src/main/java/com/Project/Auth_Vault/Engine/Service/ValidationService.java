@@ -43,7 +43,7 @@ public class ValidationService {
                 .findByClientIdAndDeveloper(req.getClientId(), developer)
                 .orElse(null);
         if (app == null) {
-            return new ValidationResponse(false, null); // App does not match this developer
+            return new ValidationResponse(false, null, null); // App does not match this developer
         }
 
         // 3. Is this route explicitly marked "protected" in the dashboard?
@@ -80,30 +80,30 @@ public class ValidationService {
      */
     private ValidationResponse validateClientJwt(String token, String requestClientId) {
         if (token == null || token.isBlank()) {
-            return new ValidationResponse(false, null);
+            return new ValidationResponse(false, null, null);
         }
         try {
             if (jwtService.isTokenExpired(token)) {
-                return new ValidationResponse(false, null);
+                return new ValidationResponse(false, null, null);
             }
 
             String role = jwtService.extractRole(token);
             if (!"CLIENT".equals(role)) {
                 // Developer token, or any non-client token — reject
-                return new ValidationResponse(false, null);
+                return new ValidationResponse(false, null, null);
             }
 
             String tokenClientId = jwtService.extractClientId(token);
             if (tokenClientId == null || !tokenClientId.equals(requestClientId)) {
                 // Valid client token, but issued for a different app
-                return new ValidationResponse(false, null);
+                return new ValidationResponse(false, null, null);
             }
 
             String username = jwtService.extractUsername(token);
-            return new ValidationResponse(true, username);
+            return new ValidationResponse(true, username, role);
 
         } catch (InValidTokenException e) {
-            return new ValidationResponse(false, null);
+            return new ValidationResponse(false, null, null);
         }
     }
 
@@ -114,16 +114,17 @@ public class ValidationService {
      */
     private ValidationResponse validateAnyJwt(String token) {
         if (token == null || token.isBlank()) {
-            return new ValidationResponse(false, null);
+            return new ValidationResponse(false, null, null);
         }
         try {
             if (jwtService.isTokenExpired(token)) {
-                return new ValidationResponse(false, null);
+                return new ValidationResponse(false, null, null);
             }
             String username = jwtService.extractUsername(token);
-            return new ValidationResponse(true, username);
+            String role = jwtService.extractRole(token); // may be null for developer tokens
+            return new ValidationResponse(true, username, role);
         } catch (InValidTokenException e) {
-            return new ValidationResponse(false, null);
+            return new ValidationResponse(false, null, null);
         }
     }
 }
