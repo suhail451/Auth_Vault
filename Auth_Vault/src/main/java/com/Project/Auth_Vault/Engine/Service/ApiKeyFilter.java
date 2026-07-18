@@ -35,9 +35,14 @@ public class ApiKeyFilter extends OncePerRequestFilter {
             "/developer/signup",
             "/developer/login",
             "/swagger-ui",
-            "/v3/api-docs"
+            "/v3/api-docs",
+            "/api/authvault/validate"
     );
-
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return SKIP_PATHS.stream().anyMatch(path::startsWith) || path.equals("/api/authvault/validate");
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

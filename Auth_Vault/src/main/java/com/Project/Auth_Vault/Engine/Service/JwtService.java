@@ -23,6 +23,12 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * DEVELOPER token — issued at /developer/login.
+     * Carries role="DEVELOPER" (or whatever the user's Role enum resolves to).
+     * NOT scoped to any specific client app — should never unlock a
+     * protected end-user route in a developer's app.
+     */
     public String generateToken(SignupEntity user) {
 
         String role = user.getRoles().stream()
@@ -39,32 +45,73 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractUsername(String token ) throws InValidTokenException {
-        try{
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
-        } catch (JwtException e){
-        throw new InValidTokenException("Token invalid or tampered");
-         }
-
+    /**
+     * CLIENT (end-user) token — issued at the client-facing register/login
+     * endpoint, scoped to a specific clientId/app. This is the ONLY token
+     * type that should pass validation for a "protected" route.
+     */
+    public String generateClientToken(SignupEntity user, String clientId) {
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim("role", "CLIENT")
+                .claim("clientId", clientId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
+                .signWith(getSigningKey())
+                .compact();
     }
 
+    public String extractUsername(String token) throws InValidTokenException {
+        try {
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (JwtException e) {
+            throw new InValidTokenException("Token invalid or tampered");
+        }
+    }
 
-    public boolean validateToken(String token,String username) throws InValidTokenException {
+    public String extractRole(String token) throws InValidTokenException {
+        try {
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .get("role", String.class);
+        } catch (JwtException e) {
+            throw new InValidTokenException("Token invalid or tampered");
+        }
+    }
 
-        String ExtractedUserName=extractUsername(token);
-        boolean isUsernameMatch=ExtractedUserName.equals(username);
-        boolean isNotExpired= !isTokenExpired(token);
+    /**
+     * Returns null if the token has no clientId claim (e.g. a developer token).
+     * Callers must handle null explicitly rather than assuming a match.
+     */
+    public String extractClientId(String token) throws InValidTokenException {
+        try {
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .get("clientId", String.class);
+        } catch (JwtException e) {
+            throw new InValidTokenException("Token invalid or tampered");
+        }
+    }
+
+    public boolean validateToken(String token, String username) throws InValidTokenException {
+        String extractedUserName = extractUsername(token);
+        boolean isUsernameMatch = extractedUserName.equals(username);
+        boolean isNotExpired = !isTokenExpired(token);
         return isUsernameMatch && isNotExpired;
-
     }
 
     public boolean isTokenExpired(String token) throws InValidTokenException {
-
         try {
             Date expiration = Jwts.parser()
                     .verifyWith(getSigningKey())
@@ -73,14 +120,8 @@ public class JwtService {
                     .getPayload()
                     .getExpiration();
             return expiration.before(new Date());
-        }catch (JwtException e){
+        } catch (JwtException e) {
             throw new InValidTokenException("Token Invalid or Expired");
         }
     }
-
-
 }
-
-
-
-
