@@ -44,15 +44,16 @@ public class AuthService {
 
         }
 
-        String accessToken = jwtService.generateClientToken(user,clientId);
-        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user);
+        String clientId = loginRequest.getClientId();
+        String accessToken = jwtService.generateClientToken(user, clientId);
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user, clientId);
 
         return new LoginResponse(accessToken, refreshToken.getToken());
 
     }
     public LoginResponse refresh(RefreshRequest request) throws InValidTokenException {
         RefreshTokenEntity refreshToken = refreshTokenService.verifyExpiration(request.getRefreshToken());
-        String newAccessToken = jwtService.generateToken(refreshToken.getUser());
+        String newAccessToken = jwtService.generateClientToken(refreshToken.getUser(), refreshToken.getClientId());
         return new LoginResponse(newAccessToken, refreshToken.getToken());
     }
 
