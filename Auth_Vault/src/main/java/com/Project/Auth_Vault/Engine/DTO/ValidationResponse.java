@@ -8,4 +8,5 @@ import lombok.Data;
 public class ValidationResponse {
     private boolean valid;
     private String username;
+    private String role;
 }

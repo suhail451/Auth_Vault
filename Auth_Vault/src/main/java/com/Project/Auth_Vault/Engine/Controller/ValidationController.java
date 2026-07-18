@@ -27,7 +27,7 @@ public class ValidationController {
 
         if (response == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ValidationResponse(false, null));
+                    .body(new ValidationResponse(false, null, null));
         }
 
         return ResponseEntity.ok(response);
