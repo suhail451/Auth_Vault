@@ -28,6 +28,9 @@ public class RefreshTokenEntity {
 
     private boolean revoked = false;
 
+    @Column(nullable = false)
+    private String clientId;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     private SignupEntity user;

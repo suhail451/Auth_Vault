@@ -22,10 +22,11 @@ public class RefreshTokenService {
 
     }
 
-    public RefreshTokenEntity createRefreshToken(SignupEntity user) {
+    public RefreshTokenEntity createRefreshToken(SignupEntity user, String clientId) {
         RefreshTokenEntity token = new RefreshTokenEntity();
         token.setToken(UUID.randomUUID().toString());
         token.setUser(user);
+        token.setClientId(clientId);
         token.setExpiryDate(Instant.now().plusMillis(604_800_000)); // 7 days
         token.setRevoked(false);
         return refreshTokenRepository.save(token);
