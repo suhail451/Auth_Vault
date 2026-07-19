@@ -3,6 +3,8 @@ package com.Project.Auth_Vault.DeveloperPortal.Controller;
 import com.Project.Auth_Vault.DeveloperPortal.Entity.ClientApp;
 import com.Project.Auth_Vault.DeveloperPortal.Entity.OpenRoute;
 import com.Project.Auth_Vault.DeveloperPortal.Service.ClientAppService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +14,20 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/apps")
 @RequiredArgsConstructor
+
+@Tag(
+        name = "Application Management APIs",
+        description = "Endpoints for creating applications and managing protected routes."
+)
 public class ClientAppController {
 
     private final ClientAppService clientAppService;
 
     // App banao
+    @Operation(
+            summary = "Create Client Application",
+            description = "Creates a new client application and returns a generated client ID."
+    )
     @PostMapping("/create")
     public ResponseEntity<?> createApp(
             @RequestHeader("X-API-KEY") String apiKey,
@@ -30,14 +41,22 @@ public class ClientAppController {
         ));
     }
 
-    // Saari apps dekho
-    @GetMapping
 
+    @Operation(
+            summary = "Get Registered Applications",
+            description = "Returns all applications associated with the developer API key."
+    )
+    @GetMapping
     public ResponseEntity<?> getApps(@RequestHeader("X-API-KEY") String apiKey) {
         return ResponseEntity.ok(clientAppService.getApps(apiKey));
     }
 
     // Route add karo
+
+    @Operation(
+            summary = "Register Application Route",
+            description = "Adds a route to the client application and marks it as protected or public."
+    )
     @PostMapping("/{clientId}/routes")
     public ResponseEntity<?> addRoute(
             @RequestHeader("X-API-KEY") String apiKey,
@@ -59,6 +78,11 @@ public class ClientAppController {
     }
 
     // Route delete karo
+
+    @Operation(
+            summary = "Delete Application Route",
+            description = "Removes a registered route from the client application."
+    )
     @DeleteMapping("/{clientId}/routes/{routeId}")
     public ResponseEntity<?> deleteRoute(
             @RequestHeader("X-API-KEY") String apiKey,

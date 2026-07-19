@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-@Tag(name = "Authentication", description = "Register, Login, Refresh Token endpoints")
+@Tag(name = "Signup", description = "Signup for the end user ")
 @RestController
 @RequestMapping("/auth")
 public class SignupController {
@@ -21,13 +21,13 @@ public class SignupController {
      public SignupController(SignupService signupService){
         this.signupService=signupService;
     }
+
+
     @Operation(
             summary = "Register new user",
             description = "Creates a new user account and returns user details"
     )
-
     @PostMapping("/register")
-
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest signupRequest){
 
 
